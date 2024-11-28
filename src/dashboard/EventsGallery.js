@@ -3,7 +3,8 @@ import axios from "axios";
 import { Plus, Edit, Trash2, Map, Calendar, ImageIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
-const EventCard = ({ event }) => {
+import DeleteConfirmModal from "./DeleteConfirmModal";
+const EventCard = ({ event, onDeleteClick }) => {
   // Format date to show only year, month, and day
   const formattedDate = event.date
     ? format(new Date(event.date), "PPP")
@@ -53,6 +54,7 @@ const EventCard = ({ event }) => {
           <Edit className="mr-2 h-4 w-4" /> Edit
         </button>
         <button
+          onClick={() => onDeleteClick(event._id, event.title)}
           className="flex-1 bg-red-500/20 text-red-400 px-4 py-2 rounded-lg 
                      hover:bg-red-500/30 transition flex items-center justify-center"
         >
@@ -67,7 +69,12 @@ const EventsGallery = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    eventId: null,
+    eventTitle: "",
+    isLoading: false,
+  });
   useEffect(() => {
     const fetchEvents = async () => {
       const token = localStorage.getItem("authToken");
@@ -86,6 +93,42 @@ const EventsGallery = () => {
     };
     fetchEvents();
   }, []);
+  const openDeleteModal = (eventId, eventTitle) => {
+    setDeleteModal({
+      isOpen: true,
+      eventId,
+      eventTitle,
+      isLoading: false,
+    });
+  };
+  const closeDeleteModal = () => {
+    setDeleteModal({
+      isOpen: false,
+      eventId: null,
+      eventTitle: "",
+      isLoading: false,
+    });
+  };
+  const handleDelete = async () => {
+    try {
+      setDeleteModal({ ...deleteModal, isLoading: true });
+      const token = localStorage.getItem("authToken");
+      await axios.delete(
+        `http://localhost:8800/api/events/${deleteModal.eventId}`,
+        {
+          headers: {
+            token: token,
+          },
+        }
+      );
+      setEvents(events.filter((event) => event._id !== deleteModal.eventId));
+      closeDeleteModal();
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      setError("Failed to delete event. Please try again later.");
+      setDeleteModal({ ...deleteModal, isLoading: false });
+    }
+  };
 
   if (loading) {
     return (
@@ -134,12 +177,23 @@ const EventsGallery = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
               {events.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onDeleteClick={openDeleteModal}
+                />
               ))}
             </div>
           )}
         </div>
       </div>
+      <DeleteConfirmModal
+        isOpen={deleteModal.isOpen}
+        eventTitle={deleteModal.eventTitle}
+        onClose={closeDeleteModal}
+        onConfirmDelete={handleDelete}
+        isLoading={deleteModal.isLoading}
+      />
     </div>
   );
 };
