@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Plus, Edit, Trash2, Map, Calendar, ImageIcon } from "lucide-react";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
 const EventCard = ({ event }) => {
   // Format date to show only year, month, and day
   const formattedDate = event.date
@@ -116,12 +117,14 @@ const EventsGallery = () => {
             <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">
               Manage Events
             </h2>
-            <button
-              className="bg-orange-500 text-white px-6 py-3 rounded-full font-bold 
-                         flex items-center hover:bg-orange-600 transition transform hover:scale-105"
-            >
-              <Plus className="mr-2 h-5 w-5" /> Create Event
-            </button>
+            <Link to={"/events/create"}>
+              <button
+                className="bg-orange-500 text-white px-6 py-3 rounded-full font-bold 
+              flex items-center hover:bg-orange-600 transition transform hover:scale-105"
+              >
+                <Plus className="mr-2 h-5 w-5" /> Create Event
+              </button>
+            </Link>
           </div>
 
           {events.length === 0 ? (
