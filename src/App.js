@@ -8,6 +8,7 @@ import LoginPage from "./auth/LoginPage";
 import { useEffect, useState } from "react";
 import OrganSideBar from "./dashboard/OrganSideBar";
 import EventsGallery from "./dashboard/EventsGallery";
+import CreateEvent from "./dashboard/CreateEvent";
 
 function App() {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ function App() {
           }
         />
         <Route path="/Organizer/events" element={<EventsGallery />} />
+        <Route path="/events/create" element={<CreateEvent />} />
       </Routes>
       {!organizerDashboard && (
         <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
