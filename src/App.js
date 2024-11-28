@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import OrganSideBar from "./dashboard/OrganSideBar";
 import EventsGallery from "./dashboard/EventsGallery";
 import CreateEvent from "./dashboard/CreateEvent";
+import DeleteConfirmModal from "./dashboard/DeleteConfirmModal";
 
 function App() {
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ function App() {
         />
         <Route path="/Organizer/events" element={<EventsGallery />} />
         <Route path="/events/create" element={<CreateEvent />} />
+        <Route path="/events/delete" element={<DeleteConfirmModal />} />
       </Routes>
       {!organizerDashboard && (
         <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
