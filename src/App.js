@@ -2,19 +2,53 @@ import logo from "./logo.svg";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import HomePage from "./components/HomePage";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import RegisterPage from "./auth/RegisterPage";
 import LoginPage from "./auth/LoginPage";
+import { useEffect, useState } from "react";
+import OrganSideBar from "./dashboard/OrganSideBar";
+import EventsGallery from "./dashboard/EventsGallery";
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(!!token);
+  }, []);
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
+  const organizerDashboard = location.pathname === "/OrganizerDashboard";
+
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/login"
+          element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route
+          path="OrganizerDashboard"
+          element={
+            <OrganSideBar
+              isLoggedIn={isLoggedIn}
+              setIsLoggedIn={setIsLoggedIn}
+              handleLogout={handleLogout}
+            />
+          }
+        />
+        <Route path="/Organizer/events" element={<EventsGallery />} />
       </Routes>
-      <Navbar />
+      {!organizerDashboard && (
+        <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      )}
     </div>
   );
 }

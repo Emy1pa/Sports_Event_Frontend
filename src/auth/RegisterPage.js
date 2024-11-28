@@ -78,7 +78,7 @@ const RegisterPage = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-r from-red-900/70 to-black/70 backdrop-blur-sm "></div>
 
-      <div className="relative z-10 bg-black/30 backdrop-blur-md rounded-2xl p-12 w-full max-w-md h-[80vh] overflow-y-auto mt-20">
+      <div className="relative z-10 bg-black/30 backdrop-blur-md rounded-2xl p-12 w-full max-w-md h-[80vh] overflow-y-auto mt-20 custom-scroll">
         <h1 className="text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">
           SportsEvents
         </h1>

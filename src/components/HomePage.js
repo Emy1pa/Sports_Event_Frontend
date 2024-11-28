@@ -1,6 +1,7 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Trophy, Zap, ChevronRight, Target, Users, Medal } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 const StatCard = ({ icon: Icon, value, label, color }) => (
   <div className="bg-white/10 p-4 rounded-xl text-center backdrop-blur-sm">
@@ -21,6 +22,33 @@ const EventCard = ({ title, date, description }) => (
 );
 
 const HomePage = () => {
+  const [userRole, setUserRole] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const role = decoded.role;
+        setUserRole(role);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        localStorage.removeItem("authToken");
+      }
+    }
+  }, []);
+
+  const handleButtonClick = () => {
+    if (userRole === "Organisateur") {
+      navigate("/OrganizerDashboard");
+    } else if (userRole === "Participant") {
+      navigate("/");
+    } else {
+      navigate("/login");
+    }
+  };
+
   const stats = [
     {
       icon: Users,
@@ -28,7 +56,12 @@ const HomePage = () => {
       label: "Active Athletes",
       color: "text-orange-500",
     },
-    { icon: Target, value: "250+", label: "Events", color: "text-blue-500" },
+    {
+      icon: Target,
+      value: "250+",
+      label: "Events",
+      color: "text-blue-500",
+    },
     {
       icon: Medal,
       value: "500+",
@@ -73,10 +106,9 @@ const HomePage = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-r from-red-900/70 to-black/70 backdrop-blur-sm"></div>
 
-      <div className="relative z-10 bg-black/30 backdrop-blur-md rounded-2xl p-12 max-w-4xl w-full h-[80vh] overflow-y-auto">
+      <div className="relative z-10 bg-black/30 backdrop-blur-md rounded-2xl p-12 max-w-4xl w-full h-[80vh] overflow-y-auto custom-scroll">
         <div className="flex justify-center items-center mb-6">
           <Trophy className="h-12 w-12 text-orange-500 mr-4" />
-
           <h1 className="text-5xl font-extrabold">SportsEvents</h1>
         </div>
 
@@ -98,13 +130,14 @@ const HomePage = () => {
             Upcoming Events
             <ChevronRight className="ml-2 h-5 w-5" />
           </Link>
-          <Link
-            to="/register"
-            className="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-red-900 transition transform hover:scale-105 flex items-center"
-          >
-            Register
-            <Zap className="ml-2 h-5 w-5" />
-          </Link>
+          {userRole === "Organisateur" && (
+            <div className="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-red-900 transition transform hover:scale-105 flex items-center">
+              <button onClick={handleButtonClick}>
+                Go to Organizer Dashboard
+              </button>
+              <Zap className="ml-2 h-5 w-5" />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-6 mb-10">
