@@ -14,6 +14,8 @@ import { Link } from "react-router-dom";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import EditEventModal from "./EditEventModal";
 import { useReactToPrint } from "react-to-print";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const EventPDFDetails = forwardRef(({ event }, ref) => {
   return (
@@ -125,10 +127,40 @@ const EventPDFDetails = forwardRef(({ event }, ref) => {
 const EventPDFModal = ({ event, isOpen, onClose }) => {
   const componentRef = useRef();
 
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    documentTitle: `${event.title}_Event_Details`,
-  });
+  const handleDownloadPDF = async () => {
+    const input = componentRef.current;
+
+    try {
+      // Use html2canvas to convert the DOM element to a canvas
+      const canvas = await html2canvas(input, {
+        scale: 2, // Increase resolution
+        useCORS: true, // Handle cross-origin images
+      });
+
+      // Create a new jsPDF instance
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      // Calculate the width and height of the PDF page
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Convert canvas to image
+      const imgData = canvas.toDataURL("image/png");
+
+      // Calculate image dimensions to fit the page
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Add image to PDF
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
+      // Save the PDF
+      pdf.save(`${event.title}_Event_Details.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Failed to generate PDF. Please try again.");
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -139,9 +171,9 @@ const EventPDFModal = ({ event, isOpen, onClose }) => {
         <div className="flex justify-end mt-4">
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2"
-            onClick={handlePrint}
+            onClick={handleDownloadPDF}
           >
-            Print PDF
+            Download PDF
           </button>
           <button
             className="bg-gray-300 px-4 py-2 rounded-lg"
