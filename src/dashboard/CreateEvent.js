@@ -51,7 +51,6 @@ const CreateEvent = () => {
     const file = e.target.files[0];
     setImage(file);
 
-    // Create image preview
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {

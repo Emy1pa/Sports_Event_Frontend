@@ -124,7 +124,7 @@ const HomePage = () => {
 
         <div className="flex justify-center space-x-6 mb-4 -mt-6">
           <Link
-            to="#events"
+            to="/events/participants"
             className="bg-orange-500 text-white px-8 py-4 rounded-full font-bold flex items-center hover:bg-orange-600 transition transform hover:scale-105"
           >
             Upcoming Events
