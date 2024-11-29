@@ -119,12 +119,9 @@ const EditEventModal = ({ isOpen, event, onClose, onUpdateSuccess }) => {
         }
       });
 
-      // Modify this part:
       if (formData.image instanceof File) {
-        // New file upload
         formPayload.append("image", formData.image);
       } else if (event.image && event.image.url) {
-        // Existing image, send URL or some identifier
         formPayload.append("existingImageUrl", event.image.url);
         formPayload.append("existingImagePublicId", event.image.publicId);
       }
