@@ -98,7 +98,7 @@ function App() {
         />
 
         <Route
-          path="/events/:eventId"
+          path="/events/participants"
           element={
             <ProtectedRoute allowedRoles={["Participant"]}>
               <UserEventsGallery />
