@@ -10,6 +10,7 @@ import OrganSideBar from "./dashboard/OrganSideBar";
 import EventsGallery from "./dashboard/EventsGallery";
 import CreateEvent from "./dashboard/CreateEvent";
 import DeleteConfirmModal from "./dashboard/DeleteConfirmModal";
+import UserEventsGallery from "./dashboard/UserEventsGallery";
 
 function App() {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ function App() {
         <Route path="/Organizer/events" element={<EventsGallery />} />
         <Route path="/events/create" element={<CreateEvent />} />
         <Route path="/events/delete" element={<DeleteConfirmModal />} />
+        <Route path="/events/:eventId" element={<UserEventsGallery />} />
       </Routes>
       {!organizerDashboard && (
         <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />

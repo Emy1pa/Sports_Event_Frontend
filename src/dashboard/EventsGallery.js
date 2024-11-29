@@ -4,7 +4,8 @@ import { Plus, Edit, Trash2, Map, Calendar, ImageIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import DeleteConfirmModal from "./DeleteConfirmModal";
-const EventCard = ({ event, onDeleteClick }) => {
+import EditEventModal from "./EditEventModal";
+const EventCard = ({ event, onDeleteClick, onEditClick }) => {
   // Format date to show only year, month, and day
   const formattedDate = event.date
     ? format(new Date(event.date), "PPP")
@@ -48,6 +49,7 @@ const EventCard = ({ event, onDeleteClick }) => {
       </div>
       <div className="flex space-x-3 mt-auto">
         <button
+          onClick={() => onEditClick(event)}
           className="flex-1 bg-blue-500/20 text-blue-400 px-4 py-2 rounded-lg 
                      hover:bg-blue-500/30 transition flex items-center justify-center"
         >
@@ -74,6 +76,10 @@ const EventsGallery = () => {
     eventId: null,
     eventTitle: "",
     isLoading: false,
+  });
+  const [editModal, setEditModal] = useState({
+    isOpen: false,
+    event: null,
   });
   useEffect(() => {
     const fetchEvents = async () => {
@@ -108,6 +114,26 @@ const EventsGallery = () => {
       eventTitle: "",
       isLoading: false,
     });
+  };
+  const openEditModal = (event) => {
+    setEditModal({
+      isOpen: true,
+      event: event,
+    });
+  };
+  const closeEditModal = () => {
+    setEditModal({
+      isOpen: false,
+      event: null,
+    });
+  };
+  const handleUpdateEvent = (updatedEvent) => {
+    setEvents(
+      events.map((event) =>
+        event._id === updatedEvent._id ? updatedEvent : event
+      )
+    );
+    closeEditModal();
   };
   const handleDelete = async () => {
     try {
@@ -181,6 +207,7 @@ const EventsGallery = () => {
                   key={event.id}
                   event={event}
                   onDeleteClick={openDeleteModal}
+                  onEditClick={openEditModal}
                 />
               ))}
             </div>
@@ -193,6 +220,12 @@ const EventsGallery = () => {
         onClose={closeDeleteModal}
         onConfirmDelete={handleDelete}
         isLoading={deleteModal.isLoading}
+      />
+      <EditEventModal
+        isOpen={editModal.isOpen}
+        event={editModal.event}
+        onClose={closeEditModal}
+        onUpdateSuccess={handleUpdateEvent}
       />
     </div>
   );
