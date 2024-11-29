@@ -10,10 +10,13 @@ const UserEventsGallery = () => {
 
   useEffect(() => {
     const fetchParticipantEvents = async () => {
+      // Retrieve token, userId, and userRole from localStorage
       const token = localStorage.getItem("authToken");
+      const userId = localStorage.getItem("userId");
+      const userRole = localStorage.getItem("userRole");
 
-      if (!token) {
-        setError("No authentication token found. Please log in.");
+      if (!token || !userId || !userRole) {
+        setError("Authentication information is incomplete. Please log in.");
         setLoading(false);
         return;
       }
@@ -23,15 +26,24 @@ const UserEventsGallery = () => {
           "http://localhost:8800/api/events/participant",
           {
             headers: {
-              token: token,
+              token,
+              "Content-Type": "application/json",
+            },
+            params: {
+              userId: userId,
+              userRole: userRole,
             },
           }
         );
+
         setEvents(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching participant events:", error);
-        setError("Failed to load your events. Please try again later.");
+        console.error("Full error details:", error.response?.data || error);
+        setError(
+          error.response?.data?.message ||
+            "Failed to load your events. Please try again later."
+        );
         setLoading(false);
       }
     };
