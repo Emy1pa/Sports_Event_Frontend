@@ -3,8 +3,12 @@ import { Users, Mail, Lock, UserPlus } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
-const RegisterPage = () => {
+const RegisterPage = ({ isLogged }) => {
+  const navigate = useNavigate();
+
+  if (isLogged) navigate("/");
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",

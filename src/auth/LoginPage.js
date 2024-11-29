@@ -6,13 +6,15 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { Mail, Lock, LogIn } from "lucide-react";
 
-const LoginPage = ({ setIsLoggedIn }) => {
+const LoginPage = ({ setIsLoggedIn, isLogged }) => {
+  const navigate = useNavigate();
+
+  if (isLogged) navigate("/");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
